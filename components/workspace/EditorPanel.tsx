@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState, useRef } from "react"
+import { useSession } from "next-auth/react"
 import dynamic from "next/dynamic"
 import * as Y from "yjs"
 import { MonacoBinding } from "y-monaco"
@@ -110,9 +111,10 @@ export function EditorPanel({ workspaceId }: EditorPanelProps) {
     // Yjs binding handles the sync automatically
   }
 
-  // Get current user (TODO: Get from auth)
-  const currentUserId = "current-user-id"
-  const currentUserName = "Current User"
+  // Get current user from session
+  const { data: session } = useSession()
+  const currentUserId = session?.user?.id || ""
+  const currentUserName = session?.user?.name || session?.user?.email || "User"
 
   return (
     <div className="flex h-full flex-col">

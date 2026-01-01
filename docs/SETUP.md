@@ -10,11 +10,14 @@ npm install
 
 ### 2. Set Up PostgreSQL Database
 
+**📖 For a complete guide with detailed explanations, see [Database Setup Guide](DATABASE_SETUP_GUIDE.md)**
+
 You need a PostgreSQL database running. You can:
 
 **Option A: Install PostgreSQL locally**
 - macOS: `brew install postgresql@15` then `brew services start postgresql@15`
 - Or download from https://www.postgresql.org/download/
+- **Important**: PostgreSQL runs on port **5432**, NOT port 3000!
 
 **Option B: Use a cloud database (recommended for quick start)**
 - Use services like Supabase (free tier), Neon, or Railway
@@ -91,6 +94,12 @@ This opens at http://localhost:5555
 - Make sure PostgreSQL is running
 - Check your DATABASE_URL is correct
 - Verify the database name exists: `createdb saas_messaging` (if needed)
+
+**Error: "Can't reach database server at `localhost:3000`"**
+- ❌ **WRONG**: Your DATABASE_URL is using port 3000 (that's your web server!)
+- ✅ **FIX**: Change DATABASE_URL to use port **5432** (PostgreSQL's port)
+- Example: `DATABASE_URL="postgresql://username@localhost:5432/saas_messaging?schema=public"`
+- See [Database Setup Guide](DATABASE_SETUP_GUIDE.md) for detailed explanation
 
 **Port already in use:**
 - Change the port in `server.ts` or use: `PORT=3001 npm run dev`

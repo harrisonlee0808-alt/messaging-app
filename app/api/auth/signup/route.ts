@@ -46,10 +46,21 @@ export async function POST(req: NextRequest) {
       { message: "User created successfully", user },
       { status: 201 }
     )
-  } catch (error) {
+  } catch (error: any) {
     console.error("Signup error:", error)
+    
+    // Handle Prisma errors
+    if (error.code === "P2002") {
+      return NextResponse.json(
+        { error: "A user with this email already exists" },
+        { status: 400 }
+      )
+    }
+    
+    // Return more specific error if available
+    const errorMessage = error.message || "Failed to create account. Please try again."
     return NextResponse.json(
-      { error: "Internal server error" },
+      { error: errorMessage },
       { status: 500 }
     )
   }

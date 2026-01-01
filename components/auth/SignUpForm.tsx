@@ -6,6 +6,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { signIn } from "@/lib/auth-client"
 
 export function SignUpForm() {
   const router = useRouter()
@@ -48,8 +49,22 @@ export function SignUpForm() {
         return
       }
 
-      // Sign in after successful signup
-      router.push("/auth/signin?registered=true")
+      // Automatically sign in after successful signup
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+        callbackUrl: "/dashboard",
+      })
+
+      if (result?.error) {
+        // If auto-signin fails, redirect to sign in page
+        router.push("/auth/signin?registered=true")
+      } else {
+        // Successfully signed in, redirect to dashboard
+        router.push("/dashboard")
+        router.refresh()
+      }
     } catch (error) {
       setError("An error occurred. Please try again.")
       setIsLoading(false)

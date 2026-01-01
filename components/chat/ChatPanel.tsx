@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
+import { useSession } from "next-auth/react"
 import { useSocket } from "@/hooks/useSocket"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -9,6 +10,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Separator } from "@/components/ui/separator"
 import { Send, Sparkles } from "lucide-react"
 import { format } from "date-fns"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 
 interface Message {
   id: string
@@ -29,13 +37,19 @@ interface ChatPanelProps {
 }
 
 export function ChatPanel({ workspaceId }: ChatPanelProps) {
+  const { data: session } = useSession()
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState("")
   const [isTyping, setIsTyping] = useState(false)
   const [typingUsers, setTypingUsers] = useState<Set<string>>(new Set())
+  const [summaryDialogOpen, setSummaryDialogOpen] = useState(false)
+  const [summary, setSummary] = useState("")
   const scrollRef = useRef<HTMLDivElement>(null)
   const { socket, isConnected } = useSocket(workspaceId)
   const typingTimeoutRef = useRef<NodeJS.Timeout>()
+  
+  const userId = session?.user?.id || ""
+  const userName = session?.user?.name || session?.user?.email || "User"
 
   // Load initial messages
   useEffect(() => {
@@ -93,13 +107,10 @@ export function ChatPanel({ workspaceId }: ChatPanelProps) {
   }, [messages])
 
   const handleSend = async () => {
-    if (!input.trim() || !socket || !isConnected) return
+    if (!input.trim() || !socket || !isConnected || !userId) return
 
     const content = input.trim()
     setInput("")
-
-    // Get current user ID from session (simplified - in production use auth)
-    const userId = "current-user-id" // TODO: Get from auth
 
     socket.emit("send-message", {
       workspaceId,
@@ -115,9 +126,7 @@ export function ChatPanel({ workspaceId }: ChatPanelProps) {
   const handleTyping = (value: string) => {
     setInput(value)
 
-    if (!socket || !isConnected) return
-
-    const userId = "current-user-id" // TODO: Get from auth
+    if (!socket || !isConnected || !userId) return
 
     // Clear existing timeout
     if (typingTimeoutRef.current) {
@@ -153,8 +162,8 @@ export function ChatPanel({ workspaceId }: ChatPanelProps) {
 
       if (response.ok) {
         const { summary } = await response.json()
-        // Display summary (could be in a modal or inline)
-        alert(summary) // TODO: Replace with proper UI
+        setSummary(summary)
+        setSummaryDialogOpen(true)
       }
     } catch (error) {
       console.error("Failed to generate summary:", error)
@@ -237,6 +246,21 @@ export function ChatPanel({ workspaceId }: ChatPanelProps) {
           </p>
         )}
       </div>
+
+      {/* Summary Dialog */}
+      <Dialog open={summaryDialogOpen} onOpenChange={setSummaryDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Conversation Summary</DialogTitle>
+            <DialogDescription>
+              AI-generated summary of the conversation
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-4">
+            <p className="text-sm whitespace-pre-wrap">{summary}</p>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

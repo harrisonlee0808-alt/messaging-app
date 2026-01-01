@@ -39,22 +39,22 @@ const features = [
 export function FeaturesSection() {
   return (
     <section id="features" className="container px-4 py-24 md:py-32">
-      <div className="mx-auto flex max-w-[58rem] flex-col items-center justify-center gap-4 text-center">
+      <div className="mx-auto flex max-w-[90rem] flex-col items-center justify-center gap-4 text-center">
         <h2 className="font-heading text-3xl sm:text-4xl md:text-5xl">
           Everything you need to collaborate
         </h2>
         <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
           All the tools your team needs in one unified platform.
         </p>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mt-12">
+        <div className="grid gap-6 md:grid-cols-2 mt-12 w-full max-w-4xl">
           {features.map((feature) => {
             const Icon = feature.icon
             return (
-              <Card key={feature.title}>
-                <CardHeader>
+              <Card key={feature.title} className="h-full">
+                <CardHeader className="space-y-3">
                   <Icon className="h-10 w-10 mb-2 text-primary" />
-                  <CardTitle>{feature.title}</CardTitle>
-                  <CardDescription>{feature.description}</CardDescription>
+                  <CardTitle className="text-xl">{feature.title}</CardTitle>
+                  <CardDescription className="text-base leading-relaxed">{feature.description}</CardDescription>
                 </CardHeader>
               </Card>
             )

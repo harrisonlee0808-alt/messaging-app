@@ -59,6 +59,17 @@ npm run dev
 
 The app will be available at `http://localhost:3000`.
 
+## Documentation
+
+All documentation is in the `/docs` folder:
+
+- **[Setup Guide](docs/SETUP.md)** - Initial setup instructions
+- **[Database Setup Guide](docs/DATABASE_SETUP_GUIDE.md)** - Complete database setup and explanation
+- **[Quick Reference](docs/QUICK_REFERENCE.md)** - Common commands and quick answers
+- **[Next Steps](docs/NEXT_STEPS.md)** - What to do after setup
+- **[Future Steps](docs/FUTURE_STEPS.md)** - Roadmap and planned features
+- **[App Overview](docs/APP_OVERVIEW.md)** - Architecture and technical details
+
 ## Project Structure
 
 ```
